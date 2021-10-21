@@ -5,13 +5,23 @@ import { api } from '../../services/api'
 import logoImg from '../../assets/logo.svg'
 import { useEffect, useState } from 'react'
 
+
+type Message = {
+    id: string;
+    text: string;
+    user: {
+        name: string;
+        avatar_url: string;
+    }
+}
+
 export function MessageList() {
 
-    const messages = useState([])
+    const [messages, setMessages]= useState<Message[]>([])
 
     useEffect( () => {
-        api.get('messages/last3').then(response => {
-            console.log(response.data)
+        api.get<Message[]>('messages/last3').then(response => {
+            setMessages(response.data)
         })
 
     }, [])
@@ -22,33 +32,21 @@ export function MessageList() {
             <img src={logoImg} alt="DoWhile 2021" />
 
             <ul className={styles.messageList}>
-                <li className={styles.message}>
-                <p className={styles.messageContent}>Nao vejo a hora de comecar esse evento. Vai ser daora bacana top de mais vamos ver vai ser depois do natal bla bla bla</p>
-                    <div className={styles.messageUser}>
+                {messages.map(message => {
+                    return(
+                      <li className={styles.message}>
+                        <p className={styles.messageContent}>{message.text}</p>
+                        <div className={styles.messageUser}>
                         <div className={styles.userImage}>
-                            <img src="https://github.com/rodrigoPQF.png" alt="Rodrigo Pereira" />
+                        <img src={message.user.avatar_url} alt={message.user.name} />
                         </div>
-                        <span>Rodrigo Pereira</span>
-                    </div>
-                </li>
-                <li className={styles.message}>
-                <p className={styles.messageContent}>Nao vejo a hora de comecar esse evento. Vai ser daora bacana top de mais vamos ver vai ser depois do natal bla bla bla</p>
-                    <div className={styles.messageUser}>
-                        <div className={styles.userImage}>
-                            <img src="https://github.com/rodrigoPQF.png" alt="Rodrigo Pereira" />
+                        <span>{message.user.name}</span>
                         </div>
-                        <span>Rodrigo Pereira</span>
-                    </div>
-                </li>
-                <li className={styles.message}>
-                    <p className={styles.messageContent}>Nao vejo a hora de comecar esse evento. Vai ser daora bacana top de mais vamos ver vai ser depois do natal bla bla bla</p>
-                    <div className={styles.messageUser}>
-                        <div className={styles.userImage}>
-                            <img src="https://github.com/rodrigoPQF.png" alt="Rodrigo Pereira" />
-                        </div>
-                        <span>Rodrigo Pereira</span>
-                    </div>
-                </li>
+                       </li>  
+                       )
+
+                })}
+           
             </ul>
 
         </div>
